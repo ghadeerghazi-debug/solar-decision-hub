@@ -409,29 +409,57 @@ export default function App() {
         .h-display { font-family: ${displayFont}; font-weight: 700; }
         .h-kufi { font-family: ${kufiFont}; font-weight: 600; letter-spacing: 0.02em; }
         .num-eng { font-family: ${isAr ? "'Reem Kufi', sans-serif" : "'Inter', sans-serif"}; }
+
+        /* Responsive: tablet */
+        @media (max-width: 900px) {
+          .app-stack-2 { grid-template-columns: 1fr !important; }
+        }
+        /* Responsive: phone */
+        @media (max-width: 640px) {
+          .app-header-pad { padding: 14px 16px !important; }
+          .app-header-row { flex-direction: column !important; align-items: stretch !important; gap: 12px !important; }
+          .app-header-right { justify-content: flex-start !important; flex-wrap: wrap !important; gap: 10px !important; }
+          .app-h1 { font-size: 26px !important; line-height: 1.15 !important; }
+          .app-kicker { font-size: 9px !important; letter-spacing: 0.18em !important; margin-bottom: 4px !important; }
+          .app-institution { font-size: 11px !important; }
+          .app-nav { padding: 4px 0 !important; gap: 2px !important; }
+          .app-nav-btn { padding: 6px 10px !important; font-size: 11px !important; gap: 4px !important; }
+          .app-lang-btn { padding: 6px 10px !important; font-size: 11px !important; }
+          .app-main { padding: 22px 14px !important; }
+          .app-section-h2 { font-size: 22px !important; }
+          .app-section-num { font-size: 16px !important; }
+          .app-section-sub { font-size: 13px !important; margin-inline-start: 0 !important; }
+          .app-pad-card { padding: 18px !important; }
+          .app-chart-card { padding: 18px !important; }
+          .app-chart-h { height: 280px !important; }
+          .app-pull { padding: 16px !important; }
+          .app-pull-value { font-size: 18px !important; }
+          .app-footer-pad { padding: 18px 14px !important; }
+          .app-vendor-grid { grid-template-columns: 1fr !important; }
+        }
       `}</style>
 
       <PaperGrain />
 
       {/* HEADER */}
       <header style={{ borderBottom: `2px solid ${T.ink}`, background: T.paper, position: 'relative', zIndex: 10 }}>
-        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '20px 32px' }}>
-          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: '20px' }}>
+        <div className="app-header-pad" style={{ maxWidth: '1280px', margin: '0 auto', padding: '20px 32px' }}>
+          <div className="app-header-row" style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: '20px' }}>
             <div>
-              <div style={{ fontSize: '11px', color: T.terracotta, letterSpacing: '0.3em', fontWeight: 600, marginBottom: '6px' }}>
+              <div className="app-kicker" style={{ fontSize: '11px', color: T.terracotta, letterSpacing: '0.3em', fontWeight: 600, marginBottom: '6px' }}>
                 — {s.headerKicker} · {fmtDate(new Date(), lang)} —
               </div>
-              <h1 className="h-display" style={{ fontSize: '38px', lineHeight: 1, color: T.ink, margin: 0 }}>
+              <h1 className="h-display app-h1" style={{ fontSize: '38px', lineHeight: 1, color: T.ink, margin: 0 }}>
                 {s.headerTitle}
               </h1>
-              <div style={{ fontSize: '13px', color: T.inkLight, marginTop: '4px' }}>
+              <div className="app-institution" style={{ fontSize: '13px', color: T.inkLight, marginTop: '4px' }}>
                 {s.headerInstitution}
               </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div className="app-header-right" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
               <Ornament size={28} color={T.terracotta} />
-              <nav style={{ display: 'flex', gap: '4px', borderTop: `1px solid ${T.borderDark}`, borderBottom: `1px solid ${T.borderDark}`, padding: '6px 0' }}>
+              <nav className="app-nav" style={{ display: 'flex', gap: '4px', borderTop: `1px solid ${T.borderDark}`, borderBottom: `1px solid ${T.borderDark}`, padding: '6px 0' }}>
                 {[
                   { id: 'comparison', label: s.nav.comparison, num: '01' },
                   { id: 'lab', label: s.nav.lab, num: '02' },
@@ -439,7 +467,7 @@ export default function App() {
                 ].map(tab => {
                   const active = view === tab.id;
                   return (
-                    <button key={tab.id} onClick={() => setView(tab.id)} style={{
+                    <button key={tab.id} onClick={() => setView(tab.id)} className="app-nav-btn" style={{
                       background: active ? T.ink : 'transparent',
                       color: active ? T.paper : T.ink,
                       padding: '8px 16px', fontSize: '13px', fontWeight: 600,
@@ -456,6 +484,7 @@ export default function App() {
               <button
                 onClick={() => setLang(isAr ? 'en' : 'ar')}
                 title={isAr ? 'Switch to English' : 'التبديل إلى العربية'}
+                className="app-lang-btn"
                 style={{
                   display: 'flex', alignItems: 'center', gap: '6px',
                   background: T.paper, border: `1.5px solid ${T.ink}`,
@@ -475,13 +504,13 @@ export default function App() {
         </div>
       </header>
 
-      <main style={{ maxWidth: '1280px', margin: '0 auto', padding: '40px 32px', position: 'relative', zIndex: 1 }}>
+      <main className="app-main" style={{ maxWidth: '1280px', margin: '0 auto', padding: '40px 32px', position: 'relative', zIndex: 1 }}>
         {view === 'comparison' && <ComparisonView vendors={rankedVendors} selectedVendors={selectedVendors} toggleVendor={toggleVendor} lang={lang} s={s} dir={dir} />}
         {view === 'lab' && <DecisionLabView weights={weights} setWeights={setWeights} rankedVendors={rankedVendors} lang={lang} s={s} dir={dir} />}
         {view === 'financial' && <FinancialView vendors={rankedVendors} params={financialParams} setParams={setFinancialParams} selectedVendors={selectedVendors} toggleVendor={toggleVendor} lang={lang} s={s} dir={dir} />}
       </main>
 
-      <footer style={{ borderTop: `2px solid ${T.ink}`, marginTop: '60px', padding: '32px', background: T.paperDark, position: 'relative', zIndex: 1 }}>
+      <footer className="app-footer-pad" style={{ borderTop: `2px solid ${T.ink}`, marginTop: '60px', padding: '32px', background: T.paperDark, position: 'relative', zIndex: 1 }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
           <Ornament size={14} color={T.ochre} />
           <div style={{ fontSize: '12px', color: T.inkLight, fontStyle: 'italic' }}>
@@ -499,15 +528,15 @@ function SectionHeader({ num, title, subtitle }) {
   return (
     <div style={{ marginBottom: '32px', borderBottom: `1px solid ${T.borderDark}`, paddingBottom: '16px' }}>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: '20px', flexWrap: 'wrap' }}>
-        <span style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', fontSize: '20px', color: T.terracotta, fontWeight: 400 }}>
+        <span className="app-section-num" style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', fontSize: '20px', color: T.terracotta, fontWeight: 400 }}>
           {num}
         </span>
-        <h2 className="h-display" style={{ fontSize: '32px', color: T.ink, margin: 0, lineHeight: 1.1 }}>
+        <h2 className="h-display app-section-h2" style={{ fontSize: '32px', color: T.ink, margin: 0, lineHeight: 1.1 }}>
           {title}
         </h2>
       </div>
       {subtitle && (
-        <p style={{ fontSize: '14px', color: T.inkLight, marginTop: '8px', marginInlineStart: '40px', fontStyle: 'italic', maxWidth: '700px', lineHeight: 1.6 }}>
+        <p className="app-section-sub" style={{ fontSize: '14px', color: T.inkLight, marginTop: '8px', marginInlineStart: '40px', fontStyle: 'italic', maxWidth: '700px', lineHeight: 1.6 }}>
           {subtitle}
         </p>
       )}
@@ -524,7 +553,7 @@ function ComparisonView({ vendors, selectedVendors, toggleVendor, lang, s, dir }
     <div>
       <SectionHeader num={s.section1Num} title={s.section1Title} subtitle={s.section1Sub} />
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0', marginBottom: '40px', border: `1px solid ${T.ink}` }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0', marginBottom: '40px', border: `1px solid ${T.ink}` }}>
         <PullQuote icon={Award} label={s.pq.highest} value={vendors[0].name[lang]} sub={`CC = ${vendors[0].cc.toFixed(4)}`} accent={T.sage} />
         <PullQuote icon={DollarSign} label={s.pq.priceRange} value={s.pqPriceRangeValue} sub={s.pqPriceRangeSub} accent={T.ochre} divider />
         <PullQuote icon={Target} label={s.pq.actualNeed} value={s.pqActualNeedValue} sub={s.pqActualNeedSub} accent={T.cobalt} divider />
@@ -541,7 +570,7 @@ function ComparisonView({ vendors, selectedVendors, toggleVendor, lang, s, dir }
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '0', border: `1px solid ${T.ink}` }}>
+        <div className="app-vendor-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '0', border: `1px solid ${T.ink}` }}>
           {vendors.map((v, idx) => {
             const selected = selectedVendors.includes(v.id);
             return (
@@ -595,20 +624,20 @@ function ComparisonView({ vendors, selectedVendors, toggleVendor, lang, s, dir }
             ({s.vendorsCount(compared.length)})
           </span>
         </h3>
-        <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(compared.length, 4)}, 1fr)`, gap: '20px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '20px' }}>
           {compared.map(v => <VendorDetailCard key={v.id} v={v} lang={lang} s={s} />)}
         </div>
       </div>
 
       {compared.length >= 2 && (
-        <div style={{ background: T.paperDark, padding: '32px', border: `1px solid ${T.border}` }}>
+        <div className="app-chart-card" style={{ background: T.paperDark, padding: '32px', border: `1px solid ${T.border}` }}>
           <h3 className="h-kufi" style={{ fontSize: '20px', color: T.ink, margin: '0 0 4px' }}>
             {s.multiDimComparison}
           </h3>
           <p style={{ fontSize: '13px', color: T.inkLight, marginBottom: '20px', fontStyle: 'italic' }}>
             {s.multiDimSub}
           </p>
-          <div style={{ height: '400px' }}>
+          <div className="app-chart-h" style={{ height: '400px' }}>
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart data={CRITERIA_LIST.map(c => {
                 const point = { criterion: c.label[lang] };
@@ -636,7 +665,7 @@ function ComparisonView({ vendors, selectedVendors, toggleVendor, lang, s, dir }
 // ============ PULL QUOTE STAT ============
 function PullQuote({ icon: Icon, label, value, sub, accent, divider }) {
   return (
-    <div style={{
+    <div className="app-pull" style={{
       padding: '24px',
       borderInlineEnd: divider ? `1px solid ${T.border}` : 'none',
       position: 'relative'
@@ -647,7 +676,7 @@ function PullQuote({ icon: Icon, label, value, sub, accent, divider }) {
           {label}
         </div>
       </div>
-      <div className="h-display" style={{ fontSize: '22px', color: T.ink, lineHeight: 1.1, marginBottom: '4px' }}>
+      <div className="h-display app-pull-value" style={{ fontSize: '22px', color: T.ink, lineHeight: 1.1, marginBottom: '4px' }}>
         {value}
       </div>
       <div style={{ fontSize: '12px', color: T.inkDim, fontStyle: 'italic' }}>{sub}</div>
@@ -729,7 +758,7 @@ function DecisionLabView({ weights, setWeights, rankedVendors, lang, s, dir }) {
     <div>
       <SectionHeader num={s.section2Num} title={s.section2Title} subtitle={s.section2Sub} />
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '32px' }}>
+      <div className="app-stack-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '32px' }}>
         <div style={{ background: T.paper, border: `1px solid ${T.ink}` }}>
           <div style={{ borderBottom: `1px solid ${T.ink}`, padding: '16px 20px', background: T.paperDark, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h3 className="h-kufi" style={{ fontSize: '16px', color: T.ink, margin: 0 }}>{s.criteriaWeights}</h3>
@@ -807,11 +836,11 @@ function DecisionLabView({ weights, setWeights, rankedVendors, lang, s, dir }) {
         </div>
       </div>
 
-      <div style={{ background: T.paperDark, padding: '32px', border: `1px solid ${T.border}` }}>
+      <div className="app-chart-card" style={{ background: T.paperDark, padding: '32px', border: `1px solid ${T.border}` }}>
         <h3 className="h-kufi" style={{ fontSize: '18px', color: T.ink, margin: '0 0 20px' }}>
           {s.ccComparison}
         </h3>
-        <div style={{ height: '320px' }}>
+        <div className="app-chart-h" style={{ height: '320px' }}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={rankedVendors.map(v => ({ name: v.name[lang], CC: v.cc, fill: v.color }))} layout="vertical" margin={{ left: 110, right: 20 }}>
               <CartesianGrid stroke={T.borderDark} strokeDasharray="2 4" horizontal={false} />
@@ -877,7 +906,7 @@ function FinancialView({ vendors, params, setParams, selectedVendors, toggleVend
           <Calculator size={16} color={T.terracotta} />
           <h3 className="h-kufi" style={{ fontSize: '15px', color: T.ink, margin: 0 }}>{s.financialParams}</h3>
         </div>
-        <div style={{ padding: '24px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
+        <div className="app-pad-card" style={{ padding: '24px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '24px' }}>
           <ParamSlider label={s.paramElectricity.label} value={params.electricityPrice} unit={s.paramElectricity.unit}
             min={50} max={300} step={5} onChange={(v) => setParams(p => ({ ...p, electricityPrice: v }))} />
           <ParamSlider label={s.paramInflation.label} value={params.annualPriceIncrease} unit={s.paramInflation.unit}
@@ -895,18 +924,18 @@ function FinancialView({ vendors, params, setParams, selectedVendors, toggleVend
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(calcs.length, 4)}, 1fr)`, gap: '0', marginBottom: '32px', border: `1px solid ${T.ink}` }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '0', marginBottom: '32px', border: `1px solid ${T.ink}` }}>
         {calcs.map((c, i) => <FinancialCard key={c.vendor.id} calc={c} divider={i < calcs.length - 1} lang={lang} s={s} />)}
       </div>
 
-      <div style={{ background: T.paperDark, padding: '32px', border: `1px solid ${T.border}`, marginBottom: '32px' }}>
+      <div className="app-chart-card" style={{ background: T.paperDark, padding: '32px', border: `1px solid ${T.border}`, marginBottom: '32px' }}>
         <h3 className="h-kufi" style={{ fontSize: '18px', color: T.ink, margin: '0 0 4px' }}>
           {s.cumulative25y}
         </h3>
         <p style={{ fontSize: '12px', color: T.inkLight, fontStyle: 'italic', marginBottom: '20px' }}>
           {s.cumulativeSub}
         </p>
-        <div style={{ height: '380px' }}>
+        <div className="app-chart-h" style={{ height: '380px' }}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={combinedChart}>
               <CartesianGrid stroke={T.borderDark} strokeDasharray="2 4" />
@@ -930,7 +959,7 @@ function FinancialView({ vendors, params, setParams, selectedVendors, toggleVend
           <Leaf size={16} color={T.sage} />
           <h3 className="h-kufi" style={{ fontSize: '16px', color: T.ink, margin: 0 }}>{s.environmental25y}</h3>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(calcs.length, 4)}, 1fr)`, gap: 0 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 0 }}>
           {calcs.map((c, i) => (
             <div key={c.vendor.id} style={{ padding: '24px', borderInlineStart: i > 0 ? `1px solid ${T.border}` : 'none' }}>
               <div className="h-kufi" style={{ fontSize: '14px', color: T.ink, marginBottom: '4px', borderBottom: `2px solid ${c.vendor.color}`, paddingBottom: '8px', display: 'inline-block' }}>
