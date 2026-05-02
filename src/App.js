@@ -155,8 +155,7 @@ const RATING_VALUES = { VL: 1, L: 2, ML: 3, M: 4, MH: 5, H: 6, VH: 7 };
 const STR = {
   ar: {
     headerKicker: 'تقرير اختيار مورد',
-    headerTitle1: 'مَنظومة الشَّمس',
-    headerTitle2: 'القرار',
+    headerTitle: 'منظومة الطاقة الشمسية',
     headerInstitution: 'جامعة الإمام الصادق · بغداد · مشروع الطاقة الشمسية',
     nav: { comparison: 'مقارنة العروض', lab: 'مختبر القرار', financial: 'العائد المالي' },
     langButton: 'EN',
@@ -227,8 +226,7 @@ const STR = {
   },
   en: {
     headerKicker: 'Vendor Selection Report',
-    headerTitle1: 'Solar Decision',
-    headerTitle2: 'Hub',
+    headerTitle: 'Solar Energy System',
     headerInstitution: "Imam Al-Sadiq University · Baghdad · Solar Energy Project",
     nav: { comparison: 'Vendor Comparison', lab: 'Decision Lab', financial: 'Financial ROI' },
     langButton: 'العربية',
@@ -424,9 +422,7 @@ export default function App() {
                 — {s.headerKicker} · {fmtDate(new Date(), lang)} —
               </div>
               <h1 className="h-display" style={{ fontSize: '38px', lineHeight: 1, color: T.ink, margin: 0 }}>
-                {s.headerTitle1}
-                <span style={{ display: 'inline-block', margin: '0 16px', color: T.terracotta }}>·</span>
-                <span style={{ fontStyle: 'italic', fontSize: '34px', color: T.inkSoft }}>{s.headerTitle2}</span>
+                {s.headerTitle}
               </h1>
               <div style={{ fontSize: '13px', color: T.inkLight, marginTop: '4px' }}>
                 {s.headerInstitution}
@@ -817,10 +813,10 @@ function DecisionLabView({ weights, setWeights, rankedVendors, lang, s, dir }) {
         </h3>
         <div style={{ height: '320px' }}>
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={rankedVendors.map(v => ({ name: v.name[lang], CC: v.cc, fill: v.color }))} layout="vertical" margin={{ left: 100, right: 20 }}>
+            <BarChart data={rankedVendors.map(v => ({ name: v.name[lang], CC: v.cc, fill: v.color }))} layout="vertical" margin={{ left: 110, right: 20 }}>
               <CartesianGrid stroke={T.borderDark} strokeDasharray="2 4" horizontal={false} />
-              <XAxis type="number" domain={[0, 0.7]} tick={{ fill: T.inkLight, fontSize: 11 }} stroke={T.borderDark} reversed={dir === 'rtl'} />
-              <YAxis type="category" dataKey="name" tick={{ fill: T.ink, fontSize: 12, fontWeight: 600 }} stroke={T.borderDark} width={95} orientation={dir === 'rtl' ? 'right' : 'left'} />
+              <XAxis type="number" domain={[0, 0.7]} tick={{ fill: T.inkLight, fontSize: 11 }} stroke={T.borderDark} />
+              <YAxis type="category" dataKey="name" tick={{ fill: T.ink, fontSize: 12, fontWeight: 600 }} stroke={T.borderDark} width={110} />
               <Tooltip contentStyle={{ background: T.paper, border: `1px solid ${T.ink}`, borderRadius: 0, direction: dir, fontFamily: 'inherit' }} />
               <ReferenceLine x={0.5} stroke={T.terracotta} strokeDasharray="3 3" />
               <Bar dataKey="CC">
@@ -914,8 +910,8 @@ function FinancialView({ vendors, params, setParams, selectedVendors, toggleVend
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={combinedChart}>
               <CartesianGrid stroke={T.borderDark} strokeDasharray="2 4" />
-              <XAxis dataKey="year" tick={{ fill: T.inkLight, fontSize: 10 }} stroke={T.borderDark} reversed={dir === 'rtl'} />
-              <YAxis tick={{ fill: T.inkLight, fontSize: 11 }} stroke={T.borderDark} label={{ value: s.millionIQD, angle: -90, position: dir === 'rtl' ? 'insideRight' : 'insideLeft', fill: T.inkLight, fontSize: 11 }} orientation={dir === 'rtl' ? 'right' : 'left'} />
+              <XAxis dataKey="year" tick={{ fill: T.inkLight, fontSize: 10 }} stroke={T.borderDark} />
+              <YAxis tick={{ fill: T.inkLight, fontSize: 11 }} stroke={T.borderDark} label={{ value: s.millionIQD, angle: -90, position: 'insideLeft', fill: T.inkLight, fontSize: 11 }} />
               <Tooltip contentStyle={{ background: T.paper, border: `1px solid ${T.ink}`, borderRadius: 0, direction: dir, fontFamily: 'inherit' }} formatter={(value) => `${fmtNum(value, lang)} ${s.millionIQD}`} />
               <Legend wrapperStyle={{ color: T.ink, fontSize: '12px', paddingTop: '12px' }} />
               <ReferenceLine y={0} stroke={T.terracotta} strokeWidth={1.5} strokeDasharray="4 4" />
