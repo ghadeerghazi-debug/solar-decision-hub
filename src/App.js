@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Battery, DollarSign, Shield, Clock, Zap, Cog, Search, Scale,
   CheckCircle2, Award, Calculator,
@@ -311,6 +311,20 @@ const fmtIQD = (n, lang) => {
 const fmtNum = (n, lang) => n.toLocaleString(lang === 'ar' ? 'ar' : 'en');
 const fmtDate = (d, lang) => d.toLocaleDateString(lang === 'ar' ? 'ar-IQ' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' });
 
+const useIsMobile = (breakpoint = 640) => {
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' && window.matchMedia(`(max-width: ${breakpoint}px)`).matches
+  );
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const m = window.matchMedia(`(max-width: ${breakpoint}px)`);
+    const h = (e) => setIsMobile(e.matches);
+    m.addEventListener('change', h);
+    return () => m.removeEventListener('change', h);
+  }, [breakpoint]);
+  return isMobile;
+};
+
 const recalculateRanking = (weights) => {
   const total = Object.values(weights).reduce((a, b) => a + b, 0);
   const norm = {};
@@ -419,9 +433,9 @@ export default function App() {
           .app-header-pad { padding: 14px 16px !important; }
           .app-header-row { flex-direction: column !important; align-items: stretch !important; gap: 12px !important; }
           .app-header-right { justify-content: flex-start !important; flex-wrap: wrap !important; gap: 10px !important; }
-          .app-h1 { font-size: 26px !important; line-height: 1.15 !important; }
-          .app-kicker { font-size: 9px !important; letter-spacing: 0.18em !important; margin-bottom: 4px !important; }
-          .app-institution { font-size: 11px !important; }
+          .app-h1 { font-size: 24px !important; line-height: 1.2 !important; }
+          .app-kicker { font-size: 10px !important; letter-spacing: 0.2em !important; margin-bottom: 6px !important; }
+          .app-institution { font-size: 12px !important; margin-top: 6px !important; }
           .app-nav { padding: 4px 0 !important; gap: 2px !important; }
           .app-nav-btn { padding: 6px 10px !important; font-size: 11px !important; gap: 4px !important; }
           .app-lang-btn { padding: 6px 10px !important; font-size: 11px !important; }
@@ -753,6 +767,7 @@ function VendorDetailCard({ v, lang, s }) {
 function DecisionLabView({ weights, setWeights, rankedVendors, lang, s, dir }) {
   const updateWeight = (key, value) => setWeights(prev => ({ ...prev, [key]: parseFloat(value) }));
   const resetWeights = () => setWeights(Object.fromEntries(CRITERIA_LIST.map(c => [c.key, c.weight])));
+  const isMobile = useIsMobile();
 
   return (
     <div>
@@ -842,10 +857,10 @@ function DecisionLabView({ weights, setWeights, rankedVendors, lang, s, dir }) {
         </h3>
         <div className="app-chart-h" style={{ height: '320px' }}>
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={rankedVendors.map(v => ({ name: v.name[lang], CC: v.cc, fill: v.color }))} layout="vertical" margin={{ left: 110, right: 20 }}>
+            <BarChart data={rankedVendors.map(v => ({ name: v.name[lang], CC: v.cc, fill: v.color }))} layout="vertical" margin={{ left: isMobile ? 0 : 20, right: 10 }}>
               <CartesianGrid stroke={T.borderDark} strokeDasharray="2 4" horizontal={false} />
-              <XAxis type="number" domain={[0, 0.7]} tick={{ fill: T.inkLight, fontSize: 11 }} stroke={T.borderDark} />
-              <YAxis type="category" dataKey="name" tick={{ fill: T.ink, fontSize: 12, fontWeight: 600 }} stroke={T.borderDark} width={110} />
+              <XAxis type="number" domain={[0, 0.8]} ticks={[0, 0.2, 0.4, 0.6, 0.8]} tickFormatter={(v) => v.toFixed(1)} tick={{ fill: T.inkLight, fontSize: 11 }} stroke={T.borderDark} />
+              <YAxis type="category" dataKey="name" tick={{ fill: T.ink, fontSize: isMobile ? 10 : 12, fontWeight: 600 }} stroke={T.borderDark} width={isMobile ? 96 : 130} tickFormatter={(name) => isMobile && name.length > 11 ? name.slice(0, 10) + '…' : name} />
               <Tooltip contentStyle={{ background: T.paper, border: `1px solid ${T.ink}`, borderRadius: 0, direction: dir, fontFamily: 'inherit' }} />
               <ReferenceLine x={0.5} stroke={T.terracotta} strokeDasharray="3 3" />
               <Bar dataKey="CC">
@@ -863,6 +878,7 @@ function DecisionLabView({ weights, setWeights, rankedVendors, lang, s, dir }) {
 function FinancialView({ vendors, params, setParams, selectedVendors, toggleVendor, lang, s, dir }) {
   const compared = vendors.filter(v => selectedVendors.includes(v.id));
   const calcs = useMemo(() => compared.map(v => ({ vendor: v, ...calculateROI(v, params) })), [compared, params]);
+  const isMobile = useIsMobile();
   const combinedChart = useMemo(() => {
     const years = Array.from({ length: 26 }, (_, i) => i);
     return years.map(year => {
@@ -937,10 +953,10 @@ function FinancialView({ vendors, params, setParams, selectedVendors, toggleVend
         </p>
         <div className="app-chart-h" style={{ height: '380px' }}>
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={combinedChart}>
+            <LineChart data={combinedChart} margin={{ top: 10, right: 10, left: isMobile ? -10 : 10, bottom: 10 }}>
               <CartesianGrid stroke={T.borderDark} strokeDasharray="2 4" />
-              <XAxis dataKey="year" tick={{ fill: T.inkLight, fontSize: 10 }} stroke={T.borderDark} />
-              <YAxis tick={{ fill: T.inkLight, fontSize: 11 }} stroke={T.borderDark} label={{ value: s.millionIQD, angle: -90, position: 'insideLeft', fill: T.inkLight, fontSize: 11 }} />
+              <XAxis dataKey="year" tick={{ fill: T.inkLight, fontSize: 10 }} stroke={T.borderDark} interval={isMobile ? 4 : 'preserveEnd'} />
+              <YAxis tick={{ fill: T.inkLight, fontSize: 10 }} stroke={T.borderDark} width={isMobile ? 40 : 60} label={isMobile ? undefined : { value: s.millionIQD, angle: -90, position: 'insideLeft', fill: T.inkLight, fontSize: 11 }} />
               <Tooltip contentStyle={{ background: T.paper, border: `1px solid ${T.ink}`, borderRadius: 0, direction: dir, fontFamily: 'inherit' }} formatter={(value) => `${fmtNum(value, lang)} ${s.millionIQD}`} />
               <Legend wrapperStyle={{ color: T.ink, fontSize: '12px', paddingTop: '12px' }} />
               <ReferenceLine y={0} stroke={T.terracotta} strokeWidth={1.5} strokeDasharray="4 4" />
