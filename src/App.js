@@ -366,6 +366,33 @@ const calculateROI = (vendor, params) => {
   };
 };
 
+// ============ CUSTOM Y-AXIS TICK (RTL-aware) ============
+// Recharts default tick uses text-anchor="end" which puts the visual
+// "end" (left side for Arabic) at the tick line — so an Arabic word
+// renders extending into the bars area and gets clipped. We anchor
+// to "start" for RTL and truncate long names ourselves.
+function CategoryYTick(props) {
+  const { x, y, payload, dir, isMobile, fontFamily } = props;
+  if (!payload) return null;
+  const text = String(payload.value || '');
+  const display = isMobile && text.length > 11 ? text.slice(0, 10) + '…' : text;
+  const isRtl = dir === 'rtl';
+  return (
+    <text
+      x={x}
+      y={y}
+      dy={4}
+      textAnchor={isRtl ? 'start' : 'end'}
+      fill={T.ink}
+      fontSize={isMobile ? 10 : 12}
+      fontWeight={600}
+      fontFamily={fontFamily}
+    >
+      {display}
+    </text>
+  );
+}
+
 // ============ DECORATIVE PATTERNS ============
 const PaperGrain = () => (
   <svg width="100%" height="100%" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', opacity: 0.4 }}>
@@ -768,6 +795,7 @@ function DecisionLabView({ weights, setWeights, rankedVendors, lang, s, dir }) {
   const updateWeight = (key, value) => setWeights(prev => ({ ...prev, [key]: parseFloat(value) }));
   const resetWeights = () => setWeights(Object.fromEntries(CRITERIA_LIST.map(c => [c.key, c.weight])));
   const isMobile = useIsMobile();
+  const kufiFont = lang === 'ar' ? "'Reem Kufi', sans-serif" : "'Inter', sans-serif";
 
   return (
     <div>
@@ -860,7 +888,7 @@ function DecisionLabView({ weights, setWeights, rankedVendors, lang, s, dir }) {
             <BarChart data={rankedVendors.map(v => ({ name: v.name[lang], CC: v.cc, fill: v.color }))} layout="vertical" margin={{ left: isMobile ? 0 : 20, right: 10 }}>
               <CartesianGrid stroke={T.borderDark} strokeDasharray="2 4" horizontal={false} />
               <XAxis type="number" domain={[0, 0.8]} ticks={[0, 0.2, 0.4, 0.6, 0.8]} tickFormatter={(v) => v.toFixed(1)} tick={{ fill: T.inkLight, fontSize: 11 }} stroke={T.borderDark} />
-              <YAxis type="category" dataKey="name" tick={{ fill: T.ink, fontSize: isMobile ? 10 : 12, fontWeight: 600 }} stroke={T.borderDark} width={isMobile ? 96 : 130} tickFormatter={(name) => isMobile && name.length > 11 ? name.slice(0, 10) + '…' : name} />
+              <YAxis type="category" dataKey="name" stroke={T.borderDark} width={isMobile ? 120 : 140} tick={<CategoryYTick dir={dir} isMobile={isMobile} fontFamily={kufiFont} />} />
               <Tooltip contentStyle={{ background: T.paper, border: `1px solid ${T.ink}`, borderRadius: 0, direction: dir, fontFamily: 'inherit' }} />
               <ReferenceLine x={0.5} stroke={T.terracotta} strokeDasharray="3 3" />
               <Bar dataKey="CC">
